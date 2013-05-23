@@ -556,10 +556,10 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
-		if(_thread.getState() != Thread.State.NEW){
+		//if(_thread.getState() == Thread.State.NEW){
 		_thread.setRunning(true);
 		_thread.start();
-		}
+		//}
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {

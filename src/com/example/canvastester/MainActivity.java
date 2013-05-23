@@ -272,7 +272,7 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
     public void onPause(){
     	super.onPause();
     	Log.d("CanvasTester", "onPause");
-		
+		finish();
     	
     }
 

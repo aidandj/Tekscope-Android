@@ -6,7 +6,10 @@ import android.view.SurfaceHolder;
 
 
 public class DrawingThread extends Thread {
-    private SurfaceHolder _surfaceHolder;
+	private Object mPauseLock = new Object();  
+	private boolean mPaused;
+	
+	private SurfaceHolder _surfaceHolder;
     private DrawingPanel _panel;
     private boolean _run = false;
 
