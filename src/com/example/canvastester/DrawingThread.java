@@ -6,10 +6,7 @@ import android.view.SurfaceHolder;
 
 
 public class DrawingThread extends Thread {
-	private Object mPauseLock = new Object();  
-	private boolean mPaused;
-	
-	private SurfaceHolder _surfaceHolder;
+    private SurfaceHolder _surfaceHolder;
     private DrawingPanel _panel;
     private boolean _run = false;
 
@@ -37,12 +34,7 @@ public class DrawingThread extends Thread {
                 synchronized (_surfaceHolder) {
                     _panel.onDraw(c);
                 }
-                
-            }
-            catch (Exception e) {
-			// we will try it again and again...
-            }
-            finally {
+            } finally {
                 // do this in a finally so that if an exception is thrown
                 // during the above, we don't leave the Surface in an
                 // inconsistent state

@@ -1,7 +1,5 @@
 package com.example.canvastester;
 
-import com.darvds.ribbonmenu.RibbonMenuCallback;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -30,22 +28,14 @@ import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
 enum ScreenItem { NONE, CH1, CH2, TRIGGER, MATH1 }
 
 public class DrawingPanel extends SurfaceView implements
 SurfaceHolder.Callback, GestureDetector.OnGestureListener,
-GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener {	
+GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener {
 
-	
-	private final int LEFT_ANIM = 1;
-	private final int RIGHT_ANIM = 2;
-	private final int CHANNEL_1 = 1;
-	private final int CHANNEL_2 = 2;	
-	
-	
 	private static final String DEBUG_TAG = "Gestures";
 	private GestureDetectorCompat mDetector;
 	private ScaleGestureDetector mScaleDetector;
@@ -198,7 +188,7 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 
 		mScaleDetector = new ScaleGestureDetector(context, this);
 
-		//setLongClickable(true);
+		setLongClickable(true);
 
 		/**Create the networking thread**/
 		/**Commented out to create non-network test version**/
@@ -315,14 +305,11 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 		// Set the gesture detector as the double tap
 		// listener.
 		mDetector.setOnDoubleTapListener(this);
-		mDetector.setIsLongpressEnabled(false);
 
 		mScaleDetector = new ScaleGestureDetector(context, this);
 
 		setLongClickable(true);
 
-		
-		
 		/**Create the networking thread**/
 		/**Commented out to create non-network test version**/
 		/*
@@ -332,19 +319,7 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 		 */
 	}
 
-/** Callback to access ribbon menus in main activity **/
-	RibbonMenuCallback RibbonMenuCallbackClass;
-	
-	void registerMenuCallback(RibbonMenuCallback callback){
-	  RibbonMenuCallbackClass = callback;
-	 }
-	
-	MainActivity theListener;
-	
-	public void setLongClickListener(MainActivity l) {
-        theListener = l;
-    }
-	
+
 	/** This section is for the overrides for the gesture listener */
 
 	@Override
@@ -365,11 +340,7 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 	@Override
 	public boolean onFling(MotionEvent event1, MotionEvent event2,
 			float velocityX, float velocityY) {
-		Log.d(DEBUG_TAG, "onFling: " + event1.getX());
-		if (event1.getX() < 40)
-			RibbonMenuCallbackClass.ToggleRibbonMenu(LEFT_ANIM);
-		if (event1.getX() > 1180)
-			RibbonMenuCallbackClass.ToggleRibbonMenu(RIGHT_ANIM);
+		Log.d(DEBUG_TAG, "onFling: ");
 		return true;
 	}
 
@@ -377,8 +348,6 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 	
 	@Override
 	public void onLongPress(MotionEvent event) {
-		Log.d(DEBUG_TAG, "onLongPress: " + event.getX() + ", " + event.getY());
-		//theListener.onLongClick(this);
 		int surfWidth = this.getWidth(); 
 		int surfHeight = this.getHeight(); 
 		int surfX = this.getLeft(); 
@@ -386,16 +355,15 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 		
 //		showPopup(findViewById(R.id.scopeView));
 		
-		
+		Log.d(DEBUG_TAG, "onLongPress: " + event.getX() + ", " + event.getY());
 		for (int i = 0; i < this.channel1Points.length ; i++){ //
 			//Log.d(DEBUG_TAG, "XY: " + (int)(event.getX()) + ", " + (int)(event.getY()) +" current Channel1 XY: " + (int)((((this.channel1Points[i].x*graphscaleX)+graphshiftx))) + "," + (int)(((this.channel1Points[i].y+graphshiftyChannel1))) ); 
-			if ((int)((event.getX())/30) == (int)((((this.channel1Points[i].x*graphscaleX)+graphshiftx))/(30*graphscaleX))){ //channel1Points[i].x * graphscaleX + graphshiftx
+			if ((int)((event.getX())/30) == (int)((((this.channel1Points[i].x*graphscaleX)+graphshiftx))/30)){ //channel1Points[i].x * graphscaleX + graphshiftx
 				//Log.d(DEBUG_TAG, "Channel 1 X Match");
 				if ((int)((event.getY())/30) == (int)((this.channel1Points[i].y+graphshiftyChannel1)/30)){ 
 					Log.d(DEBUG_TAG, "Channel 1 Touch"); 
 					activeScreenItems = ScreenItem.CH1;
-					//channel1Active = false;
-					RibbonMenuCallbackClass.ToggleRibbonWaveformMenu(CHANNEL_1);
+					channel1Active = false;
 					break;
 				}
 			}
@@ -403,13 +371,12 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 		}
 		for (int i = 0; i < this.channel2Points.length ; i++){ //
 			//Log.d(DEBUG_TAG, "XY: " + (int)(event.getX()) + ", " + (int)(event.getY()) +" current Channel2 XY: " + (int)((((this.channel2Points[i].x*graphscaleX)+graphshiftx))) + "," + (int)(((this.channel2Points[i].y+graphshiftyChannel2))) ); 
-			if ((int)((event.getX())/30) == (int)((((this.channel2Points[i].x*graphscaleX)+graphshiftx))/(30*graphscaleX))){ //channel1Points[i].x * graphscaleX + graphshiftx
+			if ((int)((event.getX())/30) == (int)((((this.channel2Points[i].x*graphscaleX)+graphshiftx))/30)){ //channel1Points[i].x * graphscaleX + graphshiftx
 				//Log.d(DEBUG_TAG, "Channel 1 X Match");
 				if ((int)((event.getY())/30) == (int)((this.channel2Points[i].y+graphshiftyChannel2)/30)){ 
 					Log.d(DEBUG_TAG, "Channel 2 Touch"); 
 					activeScreenItems = ScreenItem.CH2;
-					//channel2Active = false;
-					RibbonMenuCallbackClass.ToggleRibbonWaveformMenu(CHANNEL_2);
+					channel2Active = false;
 					break;
 				}
 			}
@@ -448,8 +415,6 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 	@Override
 	public boolean onDoubleTap(MotionEvent event) {
 		Log.d(DEBUG_TAG, "onDoubleTap: ");
-		RibbonMenuCallbackClass.ToggleRibbonMenu(LEFT_ANIM);
-		RibbonMenuCallbackClass.ToggleRibbonMenu(RIGHT_ANIM);
 		return true;
 	}
 
@@ -556,10 +521,8 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
-		//if(_thread.getState() == Thread.State.NEW){
 		_thread.setRunning(true);
 		_thread.start();
-		//}
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -568,9 +531,9 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 		_thread.setRunning(false);
 		while (retry) {
 			try {
-				_thread.interrupt();
+				_thread.join();
 				retry = false;
-			} catch (Exception e) {
+			} catch (InterruptedException e) {
 				// we will try it again and again...
 			}
 		}
@@ -772,54 +735,8 @@ GestureDetector.OnDoubleTapListener, ScaleGestureDetector.OnScaleGestureListener
 		}
 
 	}
-	
-	public class SelectedItems {
-		boolean NONE;
-		boolean CH1;
-		boolean CH2;
-		boolean MTH1;
-		boolean TRGR;
-		
-		public void wipe(){
-			NONE = CH1 = CH2 = MTH1 = TRGR = false;
-		}
-		//setters
-		public void setNONE(){
-			NONE = true;
-		}
-		public void setCH1(){
-			CH1 = true;
-		}
-		public void setCH2(){
-			CH2 = true;
-		}
-		public void setMTH1(){
-			MTH1 = true;
-		}
-		public void setTRGR(){
-			TRGR = true;
-		}
-		//getters
-		public boolean getNONE(){
-			return NONE;
-		}
-		public boolean getCH1(){
-			return CH1;
-		}
-		public boolean getCH2(){
-			return CH2;
-		}
-		public boolean getMTH1(){
-			return MTH1;
-		}
-		public boolean getTRGR(){
-			return TRGR;
-		}
-	}
 
 }
-
-
 
 /*
 @Override 
