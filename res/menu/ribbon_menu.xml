@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/ribbon_menu_channel_1" android:title="Channel 1" android:icon="@drawable/ic_launcher" android:onClick="16711680"></item>
+    <item android:id="@+id/ribbon_menu_channel_1_ptop" android:title="Peak-to-Peak" android:icon="@null" android:onClick="16711680"></item>
+    <item android:id="@+id/ribbon_menu_channel_1_avg" android:title="Average" android:icon="@null" android:onClick="16711680"></item> 
+    <item android:id="@+id/ribbon_menu_channel_1_freq" android:title="Frequency" android:icon="@null" android:onClick="16711680"></item>
+    <item android:id="@+id/ribbon_menu_channel_1_per" android:title="Period" android:icon="@null" android:onClick="16711680"></item>       
+    <item android:id="@+id/ribbon_menu_channel_2" android:title="Channel 2" android:icon="@drawable/ic_launcher" android:onClick="16757760"></item>
+    <item android:id="@+id/ribbon_menu_math_channel" android:title="Math Channel" android:icon="@drawable/ic_launcher" android:onClick="4718336"></item>
+    <item android:id="@+id/ribbon_menu_autoset" android:title="Autoset" android:icon="@drawable/ic_launcher" android:onClick="4718336"></item>
+</menu>
+
+<!-- <color name="rbm_menu_channel_1_color">16711680</color>
+    <color name="rbm_menu_channel_2_color">16757760</color>
+    <color name="rbm_menu_green">4718336</color> -->

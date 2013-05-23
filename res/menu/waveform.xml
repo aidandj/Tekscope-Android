@@ -1,0 +1,4 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+        <item android:id="@+id/clear_waveform" android:title="@string/clear_waveform_string"></item>
+
+</menu>
