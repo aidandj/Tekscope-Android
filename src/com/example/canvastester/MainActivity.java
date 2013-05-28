@@ -1,14 +1,27 @@
 package com.example.canvastester;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Random;
+
 import com.darvds.ribbonmenu.RibbonMenuView;
 import com.darvds.ribbonmenu.RibbonMenuCallback;
 import com.darvds.ribbonmenu.iRibbonMenuCallback;
+import com.example.canvastester.DrawingPanel.SingleMediaScanner;
 //import com.example.canvastester.DrawingPanel.RibbonMenuCallback;
 
 
+import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.MediaScannerConnectionClient;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.support.v4.view.GestureDetectorCompat;
@@ -108,6 +121,8 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
         rbmViewWaveform.setMenuItems(R.menu.ribbon_menu_waveform_2, RIGHT_ANIM);  
         rbmViewWaveform.setMenuItems(R.menu.ribbon_menu_waveform_1, LEFT_ANIM);
  */       
+        
+        //Creates a ribbon menu and sets left and right menus
         rbmView = (RibbonMenuView) findViewById(R.id.ribbonMenuView1);
         rbmView.setMenuClickCallback(this);
         rbmView.setMenuItems(R.menu.ribbon_menu, LEFT_ANIM);  
@@ -206,6 +221,8 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
         });
     }
    
+    //Function to intercept button calls. Case statement determines which button is pressed
+    
 	@Override
 	public void RibbonMenuItemClick(int itemId) {
 		switch (itemId) {
@@ -246,7 +263,19 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
             	mDrawingPanel.setGraphShiftChannel1(0, 100);
             	mDrawingPanel.setGraphShiftChannel2(0, 500);  
             	break;
-            default:
+			case R.id.Test1:
+				mDrawingPanel.screenShot = true;
+				while(mDrawingPanel.screenShot);
+				String ourDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "ScholaPics";
+				File[] allFiles ;
+	             File folder = new File(ourDir + "/");
+	             allFiles = folder.listFiles();
+	             Log.d("screenCap", "Opening: " + allFiles[allFiles.length - 1].getAbsolutePath());
+	             new SingleMediaScanner(this, allFiles[allFiles.length - 1]);
+				
+				//getScreen(R.id.scopeView);
+				break;
+			default:
             	break;
 		}
 			
@@ -272,8 +301,9 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
     public void onPause(){
     	super.onPause();
     	Log.d("CanvasTester", "onPause");
-		finish();
-    	
+		//mDrawingThread.onPause();
+    	//Stops thread if onpause is called
+    	mDrawingThread.setRunning(false);
     }
 
     @Override
@@ -288,7 +318,10 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
 	public void onResume(){
     	super.onResume();
     	Log.d("CanvasTester", "onResume");
-		
+    		//mDrawingThread.setRunning(true);
+    		//mDrawingThread.run();
+    	//Resumes thread
+    	mDrawingThread.onResume();
     		
     }
     
@@ -298,11 +331,22 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
     	Log.d("CanvasTester", "onRestart");
 		
     	
-    	
-    	
-    	
     }
 
+    @Override
+ 	public void onStop(){
+     	super.onStop();
+     	Log.d("CanvasTester", "onStop");
+ 		//finish();	
+     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+    	super.onSaveInstanceState(savedInstanceState);
+    	Log.d("CanvasTester", "onSaveInstanceState");
+    }
+    
+    //Callback functions to make the ribbon menus accessible from drawing panel
 	@Override
 	public void ToggleRibbonMenu(int direction) {
 		// TODO Auto-generated method stub
@@ -314,6 +358,7 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
 	@Override
 	public void ToggleRibbonWaveformMenu(int direction) {
 		// TODO Auto-generated method stub
+		//Sets up the waveform menus, these are made in the xml files
 		switch(direction){
 		case CHANNEL_1:
 			rbmView.setMenuItems(R.menu.ribbon_menu_waveform_1, WAVEFORM);
@@ -338,5 +383,34 @@ public class MainActivity extends Activity implements iRibbonMenuCallback, Ribbo
 	    openContextMenu(v);
 	    return true;
 	}   	
+	
+	
+//Class that scans a directory then opens all of the pictures in that directory
+   public class SingleMediaScanner implements MediaScannerConnectionClient {
+		   	Context context;
+	        private MediaScannerConnection mMs;
+	        private File mFile;
 
+	        public SingleMediaScanner(Context context, File f) {
+	            mFile = f;
+	            mMs = new MediaScannerConnection(context, this);
+	            mMs.connect();
+	            this.context = context;
+	        }
+
+	        public void onMediaScannerConnected() {
+	            mMs.scanFile(mFile.getAbsolutePath(), null);
+	        }
+
+	        public void onScanCompleted(String path, Uri uri) {
+	            Intent intent = new Intent(Intent.ACTION_VIEW);
+	            intent.setData(uri);
+	            Log.d("screenCap", "Starting activity");
+	            startActivityForResult(intent, 32);
+	            mMs.disconnect();
+	            //mDrawingThread.onResume();
+	        }
+
+
+	    }
 }

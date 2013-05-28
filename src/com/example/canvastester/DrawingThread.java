@@ -2,6 +2,9 @@ package com.example.canvastester;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 
@@ -12,10 +15,25 @@ public class DrawingThread extends Thread {
 	private SurfaceHolder _surfaceHolder;
     private DrawingPanel _panel;
     private boolean _run = false;
+    public boolean isPaused = false;
 
     public DrawingThread(SurfaceHolder surfaceHolder, DrawingPanel panel) {
         _surfaceHolder = surfaceHolder;
         _panel = panel;
+    }
+    
+    public void onPause() {
+        synchronized (mPauseLock) {
+            mPaused = true;
+        }
+    }
+    
+    public void onResume() {
+        synchronized (mPauseLock) {
+            mPaused = false;
+            mPauseLock.notifyAll();
+            
+        }
     }
 
     public void setRunning(boolean run) {
@@ -36,7 +54,28 @@ public class DrawingThread extends Thread {
                 c = _surfaceHolder.lockCanvas(null);
                 synchronized (_surfaceHolder) {
                     _panel.onDraw(c);
+                    //c.drawBitmap(toDisk, new Matrix(), new Paint());
+            		//c.setBitmap(toDisk);
                 }
+                //dirtyness that threads have become for me. I'll attempt to break it down:
+                //Main activity gets a button press and sets _panel.screenShot to true.
+                //Because _panel.screenShot is true, it stops the drawing by calling screenCap
+                //When screencap finishes it opens gallary and unlocks the drawing thread.
+                synchronized(_surfaceHolder) {
+                	if (_panel.screenShot){
+                	_panel.screenCap();
+                	}
+                }
+                synchronized (mPauseLock) {
+                    while (mPaused) {
+                        try {
+                        	Log.d("ADJ", "before wait");
+                            mPauseLock.wait();
+                            Log.d("ADJ", "after wait");
+                        } catch (InterruptedException e) {
+                        }
+                    }
+                }	
                 
             }
             catch (Exception e) {
