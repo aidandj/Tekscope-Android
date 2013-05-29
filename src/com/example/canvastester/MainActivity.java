@@ -7,7 +7,7 @@ import java.util.Random;
 import com.darvds.ribbonmenu.RibbonMenuView;
 import com.darvds.ribbonmenu.RibbonMenuCallback;
 import com.darvds.ribbonmenu.iRibbonMenuCallback;
-import com.example.canvastester.DrawingPanel.SingleMediaScanner;
+//import com.example.canvastester.DrawingPanel.SingleMediaScanner;
 //import com.example.canvastester.DrawingPanel.RibbonMenuCallback;
 
 
